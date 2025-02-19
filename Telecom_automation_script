@@ -1,0 +1,56 @@
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.common.by import By
+import time
+
+chrome_options = Options()
+chrome_options.add_argument("--user-data-dir=C:\\Users\\operador.2207\\AppData\\Local\\Google\\Chrome\\User Data")
+chrome_options.add_argument("--profile-directory=Profile 11") #or Profile 11
+#chrome_options.add_argument("--headless=new") #take off to use headless mode
+service= Service(ChromeDriverManager().install())
+driver= webdriver.Chrome(service=service,options=chrome_options)
+
+    
+def firstloggin():
+    driver.get("https://app.neocrm.com.br/painel-producao/pedido")
+    input("Press enter after send wpp")
+    driver.execute_script("window.open('https://web.whatsapp.com/', '_blank')")
+    time.sleep(10)
+    driver.switch_to.window(driver.window_handles[1])
+    time.sleep(10)
+
+    contact = driver.find_element(By.XPATH,'//span[@title="Neo"]')
+    contact.click()
+    time.sleep(1)
+    latest_message = driver.find_element(By.XPATH, '//div[contains(@class,"message-in")]')
+    code = latest_message.text.strip()
+    print(code)
+    driver.switch_to.window(driver.window_handles[0])
+    time.sleep(1)
+    otp_input= driver.find_element(By.XPATH,'//*[@id="input-vaadin-text-field-19"]')
+    #otp_input.send_keys(firstloggin(code))    
+
+firstloggin()
+
+button = driver.find_element(By.XPATH,'//*[@id="Painel_Atividades"]')
+rows = driver.find_elements(By.XPATH,'//*[@id="table"]')
+
+data_list = []
+
+for row in rows:
+    columns = row.find_elements(By.TAG_NAME, "td")
+    if columns:
+        data_list.append({
+            "Login": columns[0].text,
+            "Nome CLiente": columns[1].text,
+            "CPF/CNPJ": columns[2].text,
+            "Etapa": columns[3].text,
+            "Categoria": columns[4].text
+        })
+print(data_list)
+
+
+
+driver.quit()
