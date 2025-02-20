@@ -4,6 +4,7 @@ from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
 import time
+import re
 
 chrome_options = Options()
 chrome_options.add_argument("--user-data-dir=C:\\Users\\operador.2207\\AppData\\Local\\Google\\Chrome\\User Data")
@@ -15,22 +16,31 @@ driver= webdriver.Chrome(service=service,options=chrome_options)
     
 def firstloggin():
     driver.get("https://app.neocrm.com.br/painel-producao/pedido")
-    input("Press enter after send wpp")
+    wppcheck = driver.find_element(By.XPATH, '//*[@id="input-vaadin-radio-button-18"]')
+    wppcheck.click()
     driver.execute_script("window.open('https://web.whatsapp.com/', '_blank')")
     time.sleep(10)
     driver.switch_to.window(driver.window_handles[1])
-    time.sleep(10)
+    time.sleep(5)
 
     contact = driver.find_element(By.XPATH,'//span[@title="Neo"]')
     contact.click()
     time.sleep(1)
     latest_message = driver.find_element(By.XPATH, '//div[contains(@class,"message-in")]')
-    code = latest_message.text.strip()
-    print(code)
-    driver.switch_to.window(driver.window_handles[0])
-    time.sleep(1)
-    otp_input= driver.find_element(By.XPATH,'//*[@id="input-vaadin-text-field-19"]')
-    #otp_input.send_keys(firstloggin(code))    
+    if latest_message :
+        code = latest_message[-1].text.strip()
+        print(code)
+        code = re.search(r"\[(\d+)]",code)
+        code = code.group(1)
+        print("final code: ",code)
+        driver.switch_to.window(driver.window_handles[0])
+        time.sleep(1)
+        otp_input= driver.find_element(By.XPATH,'//*[@id="input-vaadin-text-field-19"]')
+        otp_input.send_keys(code) 
+
+    neo_conf = driver.find_element(By.XPATH, '//*[@id="btnLogar"]')  
+    neo_conf.click()
+    time.sleep(5) 
 
 firstloggin()
 
@@ -54,3 +64,4 @@ print(data_list)
 
 
 driver.quit()
+
