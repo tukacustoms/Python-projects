@@ -1,0 +1,19 @@
+import pandas as pd
+
+onedrive_link1 = 'https://1drv.ms/x/c/4e5b8e2b380c089e/EfGatilrySlGi8W7-AIIToMBreOzoAN9JiDodj1pwnR91g?e=KJYTXx'
+df1 = pd.read_excel(onedrive_link1)
+
+mapping ={'VALORES UM':'VALUES ONE',
+        'VALORES DOIS':'VALUES TWO',
+        'VALORES TRES':'VALUES THREE'}
+
+df_mapping = df1[list(mapping.keys())].rename(columns=mapping)
+
+df2updated = pd.concat([df2,df_mapping]).drop_duplicates(keep='first')
+
+with excel_file.open(mode='wb') as file:
+    with pd.ExcelWriter(file,engine='openpyxl') as writer:
+        df1.to_excel(writer,sheet_name='TESTE PY1', index =False)
+        df2updated.to_excel(writer,sheet_name='TESTE PY2', index =False)
+    print("sheet synced")
+
