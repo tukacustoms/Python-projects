@@ -1,0 +1,36 @@
+import requests
+import webbrowser
+import speech_recognition as sr
+from gtts import gTTS
+import time
+
+def VoiceMainMenu():
+    voice = sr.Recognizer()
+    voice.energy_threshold = 1000
+    language = 'en'
+    with sr.Microphone() as source:
+        print('Please say something:')
+        audio = voice.listen(source)
+        try:
+            trans = voice.recognize_google(audio)
+            print ("you just said \n {}".format(trans))
+            maintext = ("you just said \n {}".format(trans))
+            speech = gTTS(text=maintext, lang=language, slow=False)
+            speech.save('speech1.mp3')
+            requests.session()
+            searchsufix = trans
+            url = 'https://www.google.com/?'
+            '''
+            sufix = anything to use
+            '''
+            sufix = {'q' : searchsufix}
+            urllink = requests.get(url, params=sufix)
+            print (urllink.url)
+            webbrowser.open_new_tab(urllink.url)
+        except:
+            print('sorry i didnt understand you')
+            return
+
+
+VoiceMainMenu()
+
